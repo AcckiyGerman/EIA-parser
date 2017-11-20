@@ -17,10 +17,6 @@ def get_data(start_date='19970101', end_date='20991231'):
     Fetch records from the API for the given period of time.
     :param start_date: 'YYYYMMDD'
     :param end_date: 'YYYYMMDD'
-    :return: {
-        'data': [ [date, price], [date, price], ... ],
-        'meta': {all other data from series}
-    }
     :return: string: raw text data
     """
     # see the request and response format at
@@ -32,7 +28,6 @@ def get_data(start_date='19970101', end_date='20991231'):
         'start': start_date,
         'end': end_date
     })
-
     return response.text
 
 
@@ -90,7 +85,7 @@ def create_data_package(data, meta):
         month_records.sort(key=lambda record: record[0])  # sort by date
         filename = 'data/%s.csv' % YYYYMM
         write_csv(filename, month_records, header='date, price')
-        # create record about this file for including into datapackage.json
+        # create a record about this file for including into the datapackage.json
         resources.append({
             'name': 'Gas prices in %s %s' % (YYYYMM[0:4], YYYYMM[4:6]),
             'path': filename,
@@ -110,8 +105,8 @@ def create_data_package(data, meta):
             }
         })
 
-    meta['resources'] = resources
     # save datapackage.json file
+    meta['resources'] = resources
     with open('data/datapackage.json', 'w') as file:
         pprint(meta, stream=file)
 
